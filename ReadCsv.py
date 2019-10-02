@@ -32,29 +32,37 @@ class CSVServices:
         if (not(isinstance(desiredColumnNumbers, list))):
             raise Exception('desiredColumnNumbers should be an array')
         with open(inputFilePath) as csv_input_file:
-            with open(outputFilePath, mode='w') as csv_output_file:
+            with open(outputFilePath, 'w', newline='') as csv_output_file:
                 csv_reader = csv.reader(csv_input_file, delimiter=',')
                 csv_writer = csv.writer(csv_output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 line_count = 0
-                # reduced_data = []
                 for row in csv_reader:
                     reduced_row = []
                     for x in desiredColumnNumbers:
                         reduced_row.append(row[x])
-                    # reduced_data.append(reduced_row)
                     csv_writer.writerow(reduced_row)
+                    # csv_writer.write(reduced_row)
                     print(reduced_row)
-                    # print('\n')
                     line_count += 1
-                # print(f'Processed {line_count} lines.')
-                # return reduced_data
     
-    def transform(self, filePath):
-        raise Exception('Not yet implemented')
+    def transform(self, inputFilePath, outputFilePath, desiredKeys):
+        with open(inputFilePath) as csv_input_file:
+            with open(outputFilePath, 'w', newline='') as csv_output_file:
+                csv_reader = csv.reader(csv_input_file, delimiter=',')
+                csv_writer = csv.writer(csv_output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                for row in csv_reader:
+                    for x in desiredKeys:
+                        transformed_row = row.copy()
+                        transformed_row.insert(0, row[x])
+                        csv_writer.writerow(transformed_row)
+                        print(transformed_row)
+
+                    
 
 
 filePath = 'C:\\Users\\Acrod\\Downloads\\Utahcontacts - contacts.csv'
 outputFilePath = 'C:\\Users\\Acrod\\Downloads\\reducedOutput.csv'
+transformedFilePath = 'C:\\Users\\Acrod\\Downloads\\transformedOutput.csv'
 csv_services = CSVServices()
 # csv_data = csv_services.getCSVData(filePath)
 
@@ -79,3 +87,4 @@ csv_services = CSVServices()
 #         line_count += 1
 
 csv_services.reduceAndWriteToFile(filePath, outputFilePath, [0, 2, 4, 7, 10, 13])
+csv_services.transform(outputFilePath, transformedFilePath, [2, 3, 4, 5])
